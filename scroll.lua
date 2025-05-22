@@ -1,37 +1,51 @@
--- Tạo GUI
+-- Tạo GUI chính
 local gui = Instance.new("ScreenGui")
-gui.Name = "AutoRollMenu"
+gui.Name = "AutoRollUI"
 gui.ResetOnSpawn = false
 gui.Parent = game.CoreGui
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 150, 0, 60)
-frame.Position = UDim2.new(0, 100, 0, 200)
-frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-frame.BorderSizePixel = 0
-frame.Active = true
-frame.Draggable = true
-frame.Parent = gui
+-- Nút mở/ẩn menu (nút vuông ở góc trái)
+local toggleMenuBtn = Instance.new("TextButton")
+toggleMenuBtn.Size = UDim2.new(0, 50, 0, 50)
+toggleMenuBtn.Position = UDim2.new(0, 10, 1, -60)
+toggleMenuBtn.Text = "☰"
+toggleMenuBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 200)
+toggleMenuBtn.TextColor3 = Color3.new(1,1,1)
+toggleMenuBtn.TextSize = 28
+toggleMenuBtn.Parent = gui
 
-local toggleBtn = Instance.new("TextButton")
-toggleBtn.Size = UDim2.new(0, 40, 0, 40)
-toggleBtn.Position = UDim2.new(0, 10, 0, 10)
-toggleBtn.Text = ""
-toggleBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-toggleBtn.BorderSizePixel = 0
-toggleBtn.Parent = frame
+-- Frame menu chính
+local menu = Instance.new("Frame")
+menu.Size = UDim2.new(0, 200, 0, 120)
+menu.Position = UDim2.new(0.5, -100, 0.5, -60)
+menu.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+menu.Visible = false
+menu.Active = true
+menu.Draggable = true
+menu.Parent = gui
 
-local label = Instance.new("TextLabel")
-label.Size = UDim2.new(0, 80, 0, 40)
-label.Position = UDim2.new(0, 60, 0, 10)
-label.BackgroundTransparency = 1
-label.Text = "TẮT"
-label.TextColor3 = Color3.fromRGB(255, 255, 255)
-label.Font = Enum.Font.SourceSansBold
-label.TextSize = 20
-label.Parent = frame
+-- Tựa đề
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "Auto Roll Menu"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 20
+title.Parent = menu
 
--- Auto roll logic
+-- Nút bật/tắt auto roll
+local toggleRoll = Instance.new("TextButton")
+toggleRoll.Size = UDim2.new(0.8, 0, 0, 40)
+toggleRoll.Position = UDim2.new(0.1, 0, 0.5, -20)
+toggleRoll.Text = "BẬT Auto Roll"
+toggleRoll.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+toggleRoll.TextColor3 = Color3.new(1, 1, 1)
+toggleRoll.Font = Enum.Font.SourceSans
+toggleRoll.TextSize = 18
+toggleRoll.Parent = menu
+
+-- Logic auto roll
 local isRolling = false
 local delay = 0.2
 
@@ -49,9 +63,14 @@ spawn(function()
     end
 end)
 
--- Bật/tắt khi bấm nút
-toggleBtn.MouseButton1Click:Connect(function()
+-- Bật/tắt Auto Roll
+toggleRoll.MouseButton1Click:Connect(function()
     isRolling = not isRolling
-    toggleBtn.BackgroundColor3 = isRolling and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(150, 0, 0)
-    label.Text = isRolling and "BẬT" or "TẮT"
+    toggleRoll.Text = isRolling and "TẮT Auto Roll" or "BẬT Auto Roll"
+    toggleRoll.BackgroundColor3 = isRolling and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(150, 0, 0)
+end)
+
+-- Bấm nút mở/ẩn menu
+toggleMenuBtn.MouseButton1Click:Connect(function()
+    menu.Visible = not menu.Visible
 end)
