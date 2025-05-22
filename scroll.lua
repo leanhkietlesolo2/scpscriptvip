@@ -47,7 +47,7 @@ toggleRoll.Parent = menu
 
 -- Logic auto roll
 local isRolling = false
-local delay = 0.2
+local delay = 0.02
 
 spawn(function()
     while true do
