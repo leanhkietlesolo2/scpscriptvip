@@ -1,27 +1,27 @@
--- Thiết lập phím để bật/tắt (F5)
-local toggleKey = Enum.KeyCode.F5
-local isRolling = false
-local delay = 0.2 -- Thời gian chờ giữa các lần roll (giây)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
 
--- Vòng lặp auto roll
-spawn(function()
-    while true do
-        if isRolling then
-            pcall(function()
-                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("L5_z%Q1!Rx_")
-                if remote then
-                    remote:FireServer()
-                end
-            end)
-        end
-        wait(delay)
-    end
-end)
+local OrionLib = require(game:GetService("ReplicatedStorage"):WaitForChild("OrionLib"))
+local Window = OrionLib:MakeWindow({Name = "Auto Roll GUI", HidePremium = false, SaveConfig = true, ConfigFolder = "AutoRoll"})
 
--- Bắt sự kiện nhấn phím để bật/tắt auto roll
-game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-    if input.KeyCode == toggleKey and not gameProcessed then
-        isRolling = not isRolling
-        print("Auto Roll:", isRolling and "BẬT" or "TẮT")
-    end
-end)
+local Tab = Window:MakeTab({
+	Name = "Main",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddToggle({
+	Name = "Auto Roll",
+	Default = false,
+	Callback = function(Value)
+		_G.AutoRoll = Value
+		while _G.AutoRoll do
+			pcall(function()
+				local remote = game:GetService("ReplicatedStorage"):FindFirstChild("L5_z%Q1!Rx_")
+				if remote then
+					remote:FireServer()
+				end
+			end)
+			wait(0.2)
+		end
+	end
+})
