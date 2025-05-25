@@ -1,76 +1,85 @@
--- Tạo GUI chính
-local gui = Instance.new("ScreenGui")
-gui.Name = "AutoRollUI"
+local player = game.Players.LocalPlayer
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "RollMenu"
 gui.ResetOnSpawn = false
-gui.Parent = game.CoreGui
 
--- Nút mở/ẩn menu (nút vuông ở góc trái)
-local toggleMenuBtn = Instance.new("TextButton")
-toggleMenuBtn.Size = UDim2.new(0, 50, 0, 50)
-toggleMenuBtn.Position = UDim2.new(0, 10, 1, -60)
-toggleMenuBtn.Text = "☰"
-toggleMenuBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 200)
-toggleMenuBtn.TextColor3 = Color3.new(1,1,1)
-toggleMenuBtn.TextSize = 28
-toggleMenuBtn.Parent = gui
+-- Nút mở menu
+local toggleButton = Instance.new("TextButton", gui)
+toggleButton.Size = UDim2.new(0, 80, 0, 80)
+toggleButton.Position = UDim2.new(0, 20, 1, -100)
+toggleButton.BackgroundColor3 = Color3.fromRGB(100, 100, 255)
+toggleButton.Text = ""
 
--- Frame menu chính
-local menu = Instance.new("Frame")
-menu.Size = UDim2.new(0, 200, 0, 120)
-menu.Position = UDim2.new(0.5, -100, 0.5, -60)
-menu.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+-- Giao diện menu
+local menu = Instance.new("Frame", gui)
+menu.Size = UDim2.new(0, 300, 0, 220)
+menu.Position = UDim2.new(0.5, -150, 0.5, -110)
+menu.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 menu.Visible = false
-menu.Active = true
-menu.Draggable = true
-menu.Parent = gui
+Instance.new("UICorner", menu).CornerRadius = UDim.new(0, 12)
 
--- Tựa đề
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 30)
+-- Tiêu đề
+local title = Instance.new("TextLabel", menu)
+title.Size = UDim2.new(1, 0, 0, 40)
 title.BackgroundTransparency = 1
-title.Text = "Auto Roll Menu"
+title.Text = "AUTO ROLL MENU"
 title.TextColor3 = Color3.new(1, 1, 1)
 title.Font = Enum.Font.SourceSansBold
-title.TextSize = 20
-title.Parent = menu
+title.TextSize = 22
 
--- Nút bật/tắt auto roll
-local toggleRoll = Instance.new("TextButton")
-toggleRoll.Size = UDim2.new(0.8, 0, 0, 40)
-toggleRoll.Position = UDim2.new(0.1, 0, 0.5, -20)
-toggleRoll.Text = "BẬT Auto Roll"
-toggleRoll.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-toggleRoll.TextColor3 = Color3.new(1, 1, 1)
-toggleRoll.Font = Enum.Font.SourceSans
-toggleRoll.TextSize = 18
-toggleRoll.Parent = menu
+-- Nút Auto Roll
+local rollBtn = Instance.new("TextButton", menu)
+rollBtn.Size = UDim2.new(0.8, 0, 0, 40)
+rollBtn.Position = UDim2.new(0.1, 0, 0.4, 0)
+rollBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+rollBtn.Text = "BẬT Auto Roll"
 
--- Logic auto roll
+-- Ô nhập tốc độ
+local speedBox = Instance.new("TextBox", menu)
+speedBox.Size = UDim2.new(0.8, 0, 0, 35)
+speedBox.Position = UDim2.new(0.1, 0, 0.65, 0)
+speedBox.PlaceholderText = "Tốc độ (VD: 0.1)"
+speedBox.Text = ""
+speedBox.TextColor3 = Color3.new(1, 1, 1)
+speedBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+
+-- Biến điều khiển
 local isRolling = false
-local delay = 0.0002
+local delay = 0.2
 
-spawn(function()
-    while true do
-        if isRolling then
-            pcall(function()
-                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("L5_z%Q1!Rx_")
-                if remote then
-                    remote:FireServer()
-                end
-            end)
-        end
-        wait(delay)
-    end
+-- Tự động roll
+task.spawn(function()
+	while true do
+		if isRolling then
+			pcall(function()
+				local remote = game:GetService("ReplicatedStorage"):FindFirstChild("L5_z%Q1!Rx_")
+				if remote then
+					remote:FireServer()
+				end
+			end)
+		end
+		task.wait(delay)
+	end
 end)
 
--- Bật/tắt Auto Roll
-toggleRoll.MouseButton1Click:Connect(function()
-    isRolling = not isRolling
-    toggleRoll.Text = isRolling and "TẮT Auto Roll" or "BẬT Auto Roll"
-    toggleRoll.BackgroundColor3 = isRolling and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(150, 0, 0)
+-- Bật/tắt roll
+rollBtn.MouseButton1Click:Connect(function()
+	isRolling = not isRolling
+	rollBtn.Text = isRolling and "TẮT Auto Roll" or "BẬT Auto Roll"
+	rollBtn.BackgroundColor3 = isRolling and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 170, 0)
 end)
 
--- Bấm nút mở/ẩn menu
-toggleMenuBtn.MouseButton1Click:Connect(function()
-    menu.Visible = not menu.Visible
+-- Nhập tốc độ mới
+speedBox.FocusLost:Connect(function()
+	local value = tonumber(speedBox.Text)
+	if value and value > 0 then
+		delay = value
+		speedBox.Text = ""
+		speedBox.PlaceholderText = "Đặt thành: " .. tostring(value)
+	end
+end)
+
+-- Mở/ẩn menu
+toggleButton.MouseButton1Click:Connect(function()
+	menu.Visible = not menu.Visible
 end)
